@@ -6,8 +6,8 @@
 #'   invisibly when the app is stopped.
 #'
 #' @examples
-#' \dontrun{
-#' run_app()
+#' if (interactive()) {
+#'   run_app()
 #' }
 #'
 #' @export

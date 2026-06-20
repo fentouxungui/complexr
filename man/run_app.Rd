@@ -14,8 +14,8 @@ invisibly when the app is stopped.
 Launches the Shiny app bundled within the package in the default browser.
 }
 \examples{
-\dontrun{
-run_app()
+if (interactive()) {
+  run_app()
 }
 
 }
