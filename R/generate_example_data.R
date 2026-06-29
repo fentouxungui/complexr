@@ -116,26 +116,25 @@
 #' #   strata = "strata",
 #' #   cluster = "upm"
 #' # )
-#' 
+#'
 #' @importFrom dplyr mutate group_by ungroup case_when select n
 #' @importFrom tidyr uncount
 #' @importFrom magrittr %>%
 #' @importFrom stats plogis rnorm runif rbinom rgamma
 #' @export
-generate_example_data <- function(n_upm = 200, seed = 123){
-  
+generate_example_data <- function(n_upm = 200, seed = 123) {
   set.seed(seed)
-  
+
   # =========================================================
   # 1. PSU (Primary Sampling Units)
   # =========================================================
   upm_df <- tibble::tibble(
     upm = paste0("UPM", seq_len(n_upm)),
-    strata = sample(paste0("S",1:5), n_upm, TRUE),
+    strata = sample(paste0("S", 1:5), n_upm, TRUE),
     upm_effect = rnorm(n_upm, 0, 0.3),
     n_hogares = sample(5:15, n_upm, TRUE)
   )
-  
+
   # =========================================================
   # 2. Households
   # =========================================================
@@ -146,10 +145,10 @@ generate_example_data <- function(n_upm = 200, seed = 123){
       n_personas = sample(1:6, n(), TRUE),
       weight_hogar = runif(n(), 200, 1500),
       hogar_effect = rnorm(n(), 0, 0.2),
-      
+
       # consistent area within household
-      area = sample(c("Urban","Rural"), n(), TRUE),
-      
+      area = sample(c("Urban", "Rural"), n(), TRUE),
+
       # baseline household income (latent)
       ingreso_hogar = rgamma(
         n(),
@@ -157,7 +156,7 @@ generate_example_data <- function(n_upm = 200, seed = 123){
         scale = 800 * exp(upm_effect + hogar_effect)
       )
     )
-  
+
   # =========================================================
   # 3. Individuals
   # =========================================================
@@ -165,26 +164,26 @@ generate_example_data <- function(n_upm = 200, seed = 123){
     tidyr::uncount(n_personas, .id = "persona_id_hogar") %>%
     mutate(
       persona_id = paste0(hogar_id, "_P", persona_id_hogar),
-      
+
       # domains
-      region = sample(c("North","Center","South"), n(), TRUE),
-      sexo   = sample(c("Male","Female"), n(), TRUE),
-      
+      region = sample(c("North", "Center", "South"), n(), TRUE),
+      sexo = sample(c("Male", "Female"), n(), TRUE),
+
       # age
       edad = pmax(0, round(rnorm(n(), 35, 18)))
     )
-  
+
   # =========================================================
   # 4. Education (age-dependent)
   # =========================================================
   data <- data %>%
     mutate(
       educacion = case_when(
-        edad < 5  ~ NA_character_,
+        edad < 5 ~ NA_character_,
         edad < 12 ~ "Primary",
         edad < 18 ~ "Secondary",
         TRUE ~ sample(
-          c("Secondary","Higher"),
+          c("Secondary", "Higher"),
           n(),
           TRUE,
           prob = c(0.6, 0.4)
@@ -192,10 +191,10 @@ generate_example_data <- function(n_upm = 200, seed = 123){
       ),
       educacion = factor(
         educacion,
-        levels = c("Primary","Secondary","Higher")
+        levels = c("Primary", "Secondary", "Higher")
       )
     )
-  
+
   # =========================================================
   # 5. Education → income correlation (household level)
   # =========================================================
@@ -226,25 +225,24 @@ generate_example_data <- function(n_upm = 200, seed = 123){
       ),
       ingreso_hogar = ingreso_hogar * educ_effect
     )
-  
+
   # =========================================================
   # 6. Additional individual variables
   # =========================================================
   data <- data %>%
     mutate(
       empleo = factor(sample(
-        c("Formal","Informal","Unemployed"),
+        c("Formal", "Informal", "Unemployed"),
         n(),
         TRUE
       )),
-      
       pobre = rbinom(
         n(),
         1,
         plogis(-1 + upm_effect + hogar_effect)
       )
     )
-  
+
   # =========================================================
   # 7. Per capita income
   # =========================================================
@@ -255,7 +253,7 @@ generate_example_data <- function(n_upm = 200, seed = 123){
       gasto_pc = ingreso_pc * runif(1, 0.6, 0.9)
     ) %>%
     ungroup()
-  
+
   # =========================================================
   # 8. Missing values
   # =========================================================
@@ -267,7 +265,7 @@ generate_example_data <- function(n_upm = 200, seed = 123){
         ingreso_pc * runif(n(), 0.8, 1.2)
       )
     )
-  
+
   # =========================================================
   # 9. Final weight (household level)
   # =========================================================
@@ -275,7 +273,7 @@ generate_example_data <- function(n_upm = 200, seed = 123){
     mutate(
       weight = weight_hogar
     )
-  
+
   # =========================================================
   # 10. Final selection
   # =========================================================

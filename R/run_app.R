@@ -12,7 +12,6 @@
 #'
 #' @export
 run_app <- function() {
-
   if (shiny::isRunning()) {
     stop("A Shiny app is already running in this session.")
   }

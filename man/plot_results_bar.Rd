@@ -17,10 +17,10 @@ Plot survey estimates as bar chart
 }
 \examples{
 res <- data.frame(
-  region   = c("North", "South", "East"),
+  region = c("North", "South", "East"),
   estimate = c(0.45, 0.30, 0.55),
-  lci      = c(0.40, 0.25, 0.50),
-  uci      = c(0.50, 0.35, 0.60),
+  lci = c(0.40, 0.25, 0.50),
+  uci = c(0.50, 0.35, 0.60),
   estimator = "prop"
 )
 plot_results_bar(res)

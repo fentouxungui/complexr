@@ -19,13 +19,12 @@
 #'
 #' @export
 i18n_load <- function(lang, path = "app/www/i18n") {
-  
   file <- system.file(path, paste0(lang, ".json"), package = "complexr")
-  
+
   if (file == "") {
     stop("Language file not found: ", lang)
   }
-  
+
   jsonlite::fromJSON(file, simplifyVector = FALSE)
 }
 
@@ -47,18 +46,19 @@ i18n_load <- function(lang, path = "app/www/i18n") {
 #' @examples
 #' dict <- i18n_load("en")
 #' i18n_t(dict, "mod_datos.title")
-#' i18n_t(dict, "nonexistent.key")  # returns "nonexistent.key"
+#' i18n_t(dict, "nonexistent.key") # returns "nonexistent.key"
 #'
 #' @export
 i18n_t <- function(dict, key) {
-  
   keys <- strsplit(key, "\\.")[[1]]
   val <- dict
-  
+
   for (k in keys) {
     val <- val[[k]]
-    if (is.null(val)) return(key)
+    if (is.null(val)) {
+      return(key)
+    }
   }
-  
+
   val
 }

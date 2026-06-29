@@ -2,9 +2,7 @@
 #'
 #' @return A Shiny UI object.
 app_ui <- function() {
-  
   shiny::withMathJax(
-    
     shiny::navbarPage(
       title = shiny::tagList(
         shiny::tags$img(
@@ -15,21 +13,20 @@ app_ui <- function() {
         ),
         shiny::tags$span("complexr")
       ),
-      id    = "navbar",
+      id = "navbar",
       fluid = TRUE,
       theme = NULL,
-      
+
       # ============================================================
       # HEAD
       # ============================================================
       header = shiny::tags$head(
-        
         shiny::tags$link(
           rel  = "preconnect",
           href = "https://fonts.googleapis.com"
         ),
         shiny::tags$link(
-          rel  = "stylesheet",
+          rel = "stylesheet",
           href = paste0(
             "https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800",
             "&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500",
@@ -37,20 +34,20 @@ app_ui <- function() {
           )
         ),
         shiny::tags$link(
-          rel  = "stylesheet",
+          rel = "stylesheet",
           href = paste0(
             "https://cdnjs.cloudflare.com/ajax/libs/",
             "font-awesome/6.5.1/css/all.min.css"
           )
         ),
-        
+
         # Hojas de estilo del proyecto
         shiny::tags$link(
           rel  = "stylesheet",
           type = "text/css",
           href = "custom.css"
         ),
-        
+
         # Overrides de navbar para usar fuente Syne en la marca
         shiny::tags$style(shiny::HTML("
           .navbar-brand span,
@@ -80,7 +77,7 @@ app_ui <- function() {
           .navbar-custom-menu .form-group { margin-bottom: 0 !important; }
           .navbar-custom-menu .fa-globe { color: #33B7E8 !important; }
         ")),
-        
+
         # Mover el contenedor de idioma al extremo derecho de la navbar
         shiny::tags$script(shiny::HTML("
           $(document).ready(function() {
@@ -88,7 +85,7 @@ app_ui <- function() {
           });
         "))
       ),
-      
+
       # ============================================================
       # PESTAÑA 0 — Portada Premium
       # ============================================================
@@ -98,13 +95,11 @@ app_ui <- function() {
           shiny::textOutput("tab_portada", inline = TRUE)
         ),
         value = "portada",
-        
         shiny::div(
           class = "cover-wrapper",
-          
           shiny::div(
             class = "cover-container",
-            
+
             # ── TOP BAR ──────────────────────────────────────────
             shiny::div(
               class = "cover-topbar",
@@ -122,38 +117,35 @@ app_ui <- function() {
                 shiny::textOutput("cover_app_active", inline = TRUE)
               )
             ),
-            
+
             # ── HERO ─────────────────────────────────────────────
             shiny::div(
               class = "cover-hero",
-              
+
               # Columna izquierda
               shiny::div(
                 class = "cover-hero-left",
-                
                 shiny::div(
                   class = "cover-eyebrow",
                   shiny::tags$span("R \u00b7 survey \u00b7 i18n")
                 ),
-                
                 shiny::tags$h1(
                   class = "cover-title",
                   "Encuestas complejas,",
                   shiny::tags$br(),
                   shiny::tags$span(class = "accent", "resultados claros.")
                 ),
-                
                 shiny::tags$p(
                   class = "cover-subtitle",
                   shiny::textOutput("cover_desc", inline = TRUE)
                 ),
-                
+
                 # Botones CTA
                 shiny::div(
                   class = "cover-btn-group",
                   shiny::actionButton(
                     inputId = "cover_btn_start",
-                    label   = shiny::tagList(
+                    label = shiny::tagList(
                       shiny::tags$i(class = "fa-solid fa-rocket"),
                       shiny::textOutput("cover_btn", inline = TRUE),
                       shiny::tags$span(
@@ -164,14 +156,14 @@ app_ui <- function() {
                     class = "cover-btn cover-btn-primary"
                   ),
                   shiny::tags$a(
-                    href   = "https://github.com/stalynGuerrero/complexr",
+                    href = "https://github.com/stalynGuerrero/complexr",
                     target = "_blank",
-                    class  = "cover-btn cover-btn-ghost",
+                    class = "cover-btn cover-btn-ghost",
                     shiny::tags$i(class = "fa-brands fa-github"),
                     shiny::tags$span("GitHub")
                   )
                 ),
-                
+
                 # Badges de tecnología
                 shiny::div(
                   class = "cover-badges",
@@ -182,7 +174,7 @@ app_ui <- function() {
                   shiny::tags$span(class = "cover-badge", "survey"),
                   shiny::tags$span(class = "cover-badge", "i18n")
                 ),
-                
+
                 # Stats
                 shiny::div(
                   class = "cover-stats",
@@ -200,13 +192,13 @@ app_ui <- function() {
                   )
                 )
               ),
-              
+
               # Columna derecha — Mock dashboard
               shiny::div(
                 class = "cover-visual",
                 shiny::div(
                   class = "cover-mock",
-                  
+
                   # Barra de título del mock
                   shiny::div(
                     class = "mock-header",
@@ -218,7 +210,7 @@ app_ui <- function() {
                       "estimaciones_dominio.R"
                     )
                   ),
-                  
+
                   # KPIs
                   shiny::div(
                     class = "mock-kpis",
@@ -238,7 +230,7 @@ app_ui <- function() {
                       shiny::div(class = "mock-kpi-value red", "7")
                     )
                   ),
-                  
+
                   # Minigrafico de línea (sparkline simulado)
                   shiny::div(
                     class = "mock-sparkline",
@@ -292,7 +284,7 @@ app_ui <- function() {
                       )
                     )
                   ),
-                  
+
                   # Gráfico de barras animado
                   shiny::div(
                     class = "mock-chart",
@@ -337,7 +329,7 @@ app_ui <- function() {
                       style = "height:84%; animation-delay:0.80s;"
                     )
                   ),
-                  
+
                   # Etiquetas eje X
                   shiny::div(
                     class = "mock-chart-labels",
@@ -355,7 +347,7 @@ app_ui <- function() {
                 )
               )
             ),
-            
+
             # ── FEATURES ─────────────────────────────────────────
             shiny::div(
               class = "cover-features-section",
@@ -367,10 +359,9 @@ app_ui <- function() {
                 class = "cover-section-heading",
                 "Todo lo que necesitas para muestreo complejo"
               ),
-              
               shiny::div(
                 class = "cover-features",
-                
+
                 # Feature 1
                 shiny::div(
                   class = "cover-feature-card",
@@ -386,7 +377,7 @@ app_ui <- function() {
                     shiny::textOutput("cover_feat1_desc", inline = TRUE)
                   )
                 ),
-                
+
                 # Feature 2
                 shiny::div(
                   class = "cover-feature-card",
@@ -402,7 +393,7 @@ app_ui <- function() {
                     shiny::textOutput("cover_feat2_desc", inline = TRUE)
                   )
                 ),
-                
+
                 # Feature 3
                 shiny::div(
                   class = "cover-feature-card",
@@ -420,14 +411,14 @@ app_ui <- function() {
                 )
               )
             ),
-            
+
             # ── FOOTER ───────────────────────────────────────────
             shiny::div(
               class = "cover-footer",
               shiny::tags$span(shiny::textOutput("app_footer", inline = TRUE)),
               shiny::tags$span(class = "sep", "\u00b7"),
               shiny::tags$a(
-                href   = "https://github.com/stalynGuerrero/complexr",
+                href = "https://github.com/stalynGuerrero/complexr",
                 target = "_blank",
                 shiny::tags$i(class = "fa-brands fa-github"),
                 " GitHub"
@@ -436,7 +427,7 @@ app_ui <- function() {
           )
         )
       ),
-      
+
       # ============================================================
       # PESTAÑA 1 — Datos
       # ============================================================
@@ -448,7 +439,7 @@ app_ui <- function() {
         value = "datos",
         mod_datos_ui("datos")
       ),
-      
+
       # ============================================================
       # PESTAÑA 2 — Diseño muestral
       # ============================================================
@@ -460,7 +451,7 @@ app_ui <- function() {
         value = "diseno",
         mod_diseno_ui("diseno")
       ),
-      
+
       # ============================================================
       # PESTAÑA 3 — Estimación
       # ============================================================
@@ -472,7 +463,7 @@ app_ui <- function() {
         value = "estimacion",
         mod_estimacion_ui("estimacion")
       ),
-      
+
       # ============================================================
       # PESTAÑA 4 — Inferencia estadística
       # ============================================================
@@ -496,10 +487,10 @@ app_ui <- function() {
         value = "tablas",
         mod_tablas_ui("tablas")
       ),
-      
+
       # ── Selector de idioma + botón Salir ──────────────────────
       footer = shiny::tags$div(
-        id    = "lang-container",
+        id = "lang-container",
         class = "navbar-custom-menu",
         shiny::tags$div(
           style = "display:flex; align-items:center; gap:8px;",
@@ -515,7 +506,7 @@ app_ui <- function() {
           ),
           shiny::actionButton(
             inputId = "exit_app",
-            label   = shiny::tagList(
+            label = shiny::tagList(
               shiny::tags$i(class = "fa fa-power-off"),
               shiny::textOutput("btn_exit", inline = TRUE)
             ),

@@ -2,7 +2,6 @@ mod_estimacion_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::fluidPage(
-
     # -- Encabezado ----------------------------------------------------
     shiny::tags$div(
       class = "page-header page-header--estimacion",
@@ -18,33 +17,28 @@ mod_estimacion_ui <- function(id) {
         )
       )
     ),
-
     shiny::fluidRow(
-
       # -- Columna izquierda: parametros ----------------------------
       shiny::column(
         3,
         shiny::wellPanel(
           class = "sidebar-card sidebar-card--estimacion",
-
           shiny::tags$div(
             class = "card-header-block card-header-block--estimacion",
             shiny::tags$i(class = "fa fa-sliders"),
             shiny::textOutput(ns("params_card"), inline = TRUE)
           ),
-
           shiny::tags$div(
             class = "card-body-block",
-
             shiny::selectInput(
               inputId = ns("estimator"),
-              label   = "Tipo de estimaci\u00f3n",
+              label = "Tipo de estimaci\u00f3n",
               choices = c(
-                "Media"        = "mean",
-                "Total"        = "total",
+                "Media" = "mean",
+                "Total" = "total",
                 "Proporci\u00f3n" = "prop",
-                "Raz\u00f3n"      = "ratio",
-                "Cuantiles"    = "quantile"
+                "Raz\u00f3n" = "ratio",
+                "Cuantiles" = "quantile"
               )
             ),
 
@@ -52,10 +46,12 @@ mod_estimacion_ui <- function(id) {
             shiny::conditionalPanel(
               condition = sprintf("input['%s'] == 'ratio'", ns("estimator")),
               shiny::selectInput(
-                ns("numerator"), "Numerador", choices = NULL
+                ns("numerator"), "Numerador",
+                choices = NULL
               ),
               shiny::selectInput(
-                ns("denominator"), "Denominador", choices = NULL
+                ns("denominator"), "Denominador",
+                choices = NULL
               ),
               shiny::uiOutput(ns("ratio_levels_ui"))
             ),
@@ -87,12 +83,10 @@ mod_estimacion_ui <- function(id) {
               choices  = c("Ninguno" = ""),
               multiple = TRUE
             ),
-
             shiny::hr(),
-
             shiny::actionButton(
               inputId = ns("run"),
-              label   = shiny::tagList(
+              label = shiny::tagList(
                 shiny::tags$i(class = "fa fa-play"),
                 " ",
                 shiny::textOutput(ns("run_btn"), inline = TRUE)
@@ -107,7 +101,6 @@ mod_estimacion_ui <- function(id) {
       shiny::column(
         9,
         shiny::wellPanel(
-
           # Marco teorico
           shiny::tags$div(
             class = "card-header-block card-header-block--estimacion",
@@ -118,7 +111,6 @@ mod_estimacion_ui <- function(id) {
             class = "card-body-block",
             shiny::uiOutput(ns("theory_box"))
           ),
-
           shiny::hr(),
 
           # Estado
@@ -131,7 +123,6 @@ mod_estimacion_ui <- function(id) {
             class = "card-body-block",
             shiny::verbatimTextOutput(ns("log"))
           ),
-
           shiny::hr(),
 
           # Resultado
@@ -144,7 +135,6 @@ mod_estimacion_ui <- function(id) {
             class = "card-body-block",
             DT::DTOutput(ns("preview"))
           ),
-
           shiny::hr(),
 
           # Indicadores de calidad

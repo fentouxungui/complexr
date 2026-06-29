@@ -2,24 +2,20 @@ mod_variables_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::tagList(
-
     # ── Alerta si no hay diseño construido ──────────────────────────
     shiny::uiOutput(ns("no_design_alert")),
-
     shiny::fluidRow(
-
       # ── Columna izquierda: formulario de creación ───────────────
       shiny::column(
         width = 5,
         shiny::wellPanel(
-
           # Selector de modo
           shiny::div(
             style = "margin-bottom:14px;",
             shiny::radioButtons(
               ns("mode"),
-              label        = NULL,
-              choiceNames  = list(
+              label = NULL,
+              choiceNames = list(
                 shiny::tagList(
                   shiny::tags$i(class = "fa fa-mouse-pointer"), " ",
                   shiny::textOutput(ns("lbl_mode_basic"), inline = TRUE)
@@ -30,38 +26,34 @@ mod_variables_ui <- function(id) {
                 )
               ),
               choiceValues = list("basic", "expert"),
-              selected     = "basic",
-              inline       = TRUE
+              selected = "basic",
+              inline = TRUE
             )
           ),
-
           shiny::hr(style = "margin:4px 0 12px;"),
 
           # ── Modo básico ─────────────────────────────────────────
           shiny::conditionalPanel(
             condition = paste0("input['", ns("mode"), "'] == 'basic'"),
-
             shiny::textInput(
               ns("var_name"),
-              label       = shiny::textOutput(
-                ns("lbl_var_name"), inline = TRUE
+              label = shiny::textOutput(
+                ns("lbl_var_name"),
+                inline = TRUE
               ),
               placeholder = "ej: ingreso_pc"
             ),
-
             shiny::selectInput(
               ns("op_type"),
               label   = shiny::textOutput(ns("lbl_op_type"), inline = TRUE),
               choices = c("arithmetic", "mathfun", "indicator", "recode", "cut")
             ),
-
             shiny::uiOutput(ns("basic_form"))
           ),
 
           # ── Modo experto ────────────────────────────────────────
           shiny::conditionalPanel(
             condition = paste0("input['", ns("mode"), "'] == 'expert'"),
-
             shiny::tags$small(
               shiny::textOutput(ns("lbl_expert_hint"), inline = TRUE),
               style = "color:#4A6572; display:block; margin-bottom:4px;"
@@ -76,10 +68,11 @@ mod_variables_ui <- function(id) {
             ),
             shiny::textAreaInput(
               ns("expert_code"),
-              label       = shiny::textOutput(
-                ns("lbl_expert_label"), inline = TRUE
+              label = shiny::textOutput(
+                ns("lbl_expert_label"),
+                inline = TRUE
               ),
-              rows        = 6,
+              rows = 6,
               placeholder = paste0(
                 "ingreso_pc <- ingreso / miembros\n",
                 "pobre      <- ifelse(ingreso_pc < 200, 1L, 0L)\n",
@@ -87,7 +80,6 @@ mod_variables_ui <- function(id) {
               )
             )
           ),
-
           shiny::hr(style = "margin:12px 0 8px;"),
 
           # Botones de acción

@@ -4,7 +4,7 @@
 
 .th_mean <- function(lang) {
   if (lang == "en") {
-"<b>Population mean under complex design</b><br><br>
+    "<b>Population mean under complex design</b><br><br>
 
 The population mean estimator is obtained as:
 
@@ -50,7 +50,7 @@ $$
 Variance is estimated via Taylor linearization or replication methods.
 "
   } else {
-"<b>Media poblacional bajo dise\u00f1o complejo</b><br><br>
+    "<b>Media poblacional bajo dise\u00f1o complejo</b><br><br>
 
 El estimador de la media poblacional se obtiene como:
 
@@ -101,7 +101,7 @@ m\u00e9todos de replicaci\u00f3n.
 
 .th_total <- function(lang) {
   if (lang == "en") {
-"<b>Population total</b><br><br>
+    "<b>Population total</b><br><br>
 
 The population total estimator corresponds to the Horvitz-Thompson estimator:
 
@@ -129,7 +129,7 @@ $$
 This estimator is unbiased under the sampling design.
 "
   } else {
-"<b>Total poblacional</b><br><br>
+    "<b>Total poblacional</b><br><br>
 
 El estimador del total poblacional corresponde al estimador de Horvitz-Thompson:
 
@@ -161,7 +161,7 @@ Este estimador es insesgado bajo el dise\u00f1o de muestreo.
 
 .th_prop <- function(lang) {
   if (lang == "en") {
-"<b>Population proportion</b><br><br>
+    "<b>Population proportion</b><br><br>
 
 Defining an indicator variable:
 
@@ -186,7 +186,7 @@ This estimator is equivalent to the weighted mean of the indicator variable.
 Variance is approximated via Taylor linearization.
 "
   } else {
-"<b>Proporci\u00f3n poblacional</b><br><br>
+    "<b>Proporci\u00f3n poblacional</b><br><br>
 
 Definiendo una variable indicadora:
 
@@ -215,7 +215,7 @@ La varianza se aproxima mediante linearizaci\u00f3n de Taylor.
 
 .th_ratio <- function(lang) {
   if (lang == "en") {
-"<b>Ratio estimator</b><br><br>
+    "<b>Ratio estimator</b><br><br>
 
 The ratio estimator compares two estimated population totals
 from a sample with expansion weights.
@@ -320,7 +320,7 @@ correlation between \\(Y\\) and \\(X\\), as the denominator acts as
 an auxiliary variable reducing the variance of the estimator.
 "
   } else {
-"<b>Estimador de raz\u00f3n</b><br><br>
+    "<b>Estimador de raz\u00f3n</b><br><br>
 
 El estimador de raz\u00f3n compara dos totales poblacionales estimados
 a partir de una muestra con pesos de expansi\u00f3n.
@@ -429,7 +429,7 @@ act\u00faa como variable auxiliar reduciendo la varianza del estimador.
 
 .th_quantile <- function(lang) {
   if (lang == "en") {
-"<b>Weighted quantiles</b><br><br>
+    "<b>Weighted quantiles</b><br><br>
 
 Population quantiles are defined from the weighted cumulative
 distribution function:
@@ -456,7 +456,7 @@ Variance is usually estimated via:
 </ul>
 "
   } else {
-"<b>Cuantiles ponderados</b><br><br>
+    "<b>Cuantiles ponderados</b><br><br>
 
 Los cuantiles poblacionales se definen a partir de la
 funci\u00f3n de distribuci\u00f3n acumulada ponderada:
@@ -487,7 +487,7 @@ La varianza suele estimarse mediante:
 
 .th_quality <- function(lang) {
   if (lang == "en") {
-"<b>Coefficient of Variation (CV)</b><br><br>
+    "<b>Coefficient of Variation (CV)</b><br><br>
 
 The coefficient of variation measures the relative precision of the estimator.
 
@@ -551,7 +551,7 @@ $$
 </ul>
 "
   } else {
-"<b>Coeficiente de Variaci\u00f3n (CV)</b><br><br>
+    "<b>Coeficiente de Variaci\u00f3n (CV)</b><br><br>
 
 El coeficiente de variaci\u00f3n mide la precisi\u00f3n relativa del estimador.
 
@@ -622,9 +622,7 @@ $$
 # ---------------------------------------------------------------------------
 
 mod_estimacion_server <- function(id, design, dict) {
-
   shiny::moduleServer(id, function(input, output, session) {
-
     ns <- session$ns
 
     # --------------------------------------------------
@@ -664,39 +662,44 @@ mod_estimacion_server <- function(id, design, dict) {
     shiny::observe({
       d <- dict()
       shiny::updateSelectInput(session, "estimator",
-        label   = i18n_t(d, "mod_estimacion.estimator_label"),
+        label = i18n_t(d, "mod_estimacion.estimator_label"),
         choices = stats::setNames(
           c("mean", "total", "prop", "ratio", "quantile"),
-          c(i18n_t(d, "mod_estimacion.mean"),
+          c(
+            i18n_t(d, "mod_estimacion.mean"),
             i18n_t(d, "mod_estimacion.total"),
             i18n_t(d, "mod_estimacion.prop"),
             i18n_t(d, "mod_estimacion.ratio"),
-            i18n_t(d, "mod_estimacion.quantile"))
+            i18n_t(d, "mod_estimacion.quantile")
+          )
         )
       )
       shiny::updateSelectInput(session, "numerator",
-        label = i18n_t(d, "mod_estimacion.numerator"))
+        label = i18n_t(d, "mod_estimacion.numerator")
+      )
       shiny::updateSelectInput(session, "denominator",
-        label = i18n_t(d, "mod_estimacion.denominator"))
+        label = i18n_t(d, "mod_estimacion.denominator")
+      )
       shiny::updateTextInput(session, "probs",
-        label = i18n_t(d, "mod_estimacion.probs"))
+        label = i18n_t(d, "mod_estimacion.probs")
+      )
       shiny::updateSelectInput(session, "y_var",
-        label = i18n_t(d, "mod_estimacion.y_var"))
+        label = i18n_t(d, "mod_estimacion.y_var")
+      )
       shiny::updateSelectInput(session, "domain_vars",
-        label = i18n_t(d, "mod_estimacion.domain_vars"))
+        label = i18n_t(d, "mod_estimacion.domain_vars")
+      )
     })
 
     # --------------------------------------------------
     # 1. Theory box
     # --------------------------------------------------
     output$theory_box <- shiny::renderUI({
-
       shiny::req(input$estimator)
-      d    <- dict()
+      d <- dict()
       lang <- i18n_t(d, "lang")
 
-      theory_text <- switch(
-        input$estimator,
+      theory_text <- switch(input$estimator,
         "mean"     = .th_mean(lang),
         "total"    = .th_total(lang),
         "prop"     = .th_prop(lang),
@@ -743,7 +746,6 @@ mod_estimacion_server <- function(id, design, dict) {
     # 3. Populate selectors from design
     # --------------------------------------------------
     shiny::observeEvent(design(), {
-
       des <- design()
       shiny::req(des)
       shiny::req(!is.null(des$variables))
@@ -751,11 +753,11 @@ mod_estimacion_server <- function(id, design, dict) {
       vars <- names(des$variables)
       shiny::req(length(vars) > 0)
 
-      d    <- dict()
+      d <- dict()
       none <- stats::setNames("", i18n_t(d, "mod_estimacion.none"))
 
-      shiny::updateSelectInput(session, "y_var",       choices = vars)
-      shiny::updateSelectInput(session, "numerator",   choices = vars)
+      shiny::updateSelectInput(session, "y_var", choices = vars)
+      shiny::updateSelectInput(session, "numerator", choices = vars)
       shiny::updateSelectInput(session, "denominator", choices = vars)
       shiny::updateSelectInput(session, "domain_vars", choices = c(none, vars))
     })
@@ -763,36 +765,36 @@ mod_estimacion_server <- function(id, design, dict) {
     # --------------------------------------------------
     # 3b. Filter variables by estimator type
     # --------------------------------------------------
-    shiny::observeEvent(list(design(), input$estimator), {
+    shiny::observeEvent(list(design(), input$estimator),
+      {
+        des <- design()
+        shiny::req(des)
+        shiny::req(!is.null(des$variables))
+        shiny::req(input$estimator)
 
-      des <- design()
-      shiny::req(des)
-      shiny::req(!is.null(des$variables))
-      shiny::req(input$estimator)
+        vars <- des$variables
 
-      vars <- des$variables
+        if (input$estimator %in% c("mean", "total", "quantile")) {
+          valid_vars <- names(vars)[vapply(vars, is.numeric, logical(1))]
+        } else {
+          valid_vars <- names(vars)
+        }
 
-      if (input$estimator %in% c("mean", "total", "quantile")) {
-        valid_vars <- names(vars)[vapply(vars, is.numeric, logical(1))]
-      } else {
-        valid_vars <- names(vars)
-      }
-
-      shiny::updateSelectInput(session, "y_var", choices = valid_vars)
-
-    }, ignoreInit = TRUE)
+        shiny::updateSelectInput(session, "y_var", choices = valid_vars)
+      },
+      ignoreInit = TRUE
+    )
 
     # --------------------------------------------------
     # 4. Dynamic ratio level UI
     # --------------------------------------------------
     output$ratio_levels_ui <- shiny::renderUI({
-
       shiny::req(input$estimator == "ratio")
       shiny::req(input$numerator, input$denominator)
       shiny::req(design())
 
-      vars      <- design()$variables
-      d         <- dict()
+      vars <- design()$variables
+      d <- dict()
 
       num_is_cat <- is.factor(vars[[input$numerator]]) ||
         is.character(vars[[input$numerator]])
@@ -822,72 +824,73 @@ mod_estimacion_server <- function(id, design, dict) {
         ))
       }
 
-      if (length(ui) == 0) return(NULL)
+      if (length(ui) == 0) {
+        return(NULL)
+      }
       shiny::tagList(ui)
     })
 
     # --------------------------------------------------
     # 5. Run estimation
     # --------------------------------------------------
-    results_r <- shiny::eventReactive(input$run, {
+    results_r <- shiny::eventReactive(input$run,
+      {
+        des <- design()
+        shiny::req(des, input$estimator)
 
-      des <- design()
-      shiny::req(des, input$estimator)
+        domain <- input$domain_vars
+        if (length(domain) == 0 || all(domain == "")) domain <- NULL
 
-      domain <- input$domain_vars
-      if (length(domain) == 0 || all(domain == "")) domain <- NULL
+        if (input$estimator == "ratio") {
+          num <- input$numerator
+          den <- input$denominator
+          shiny::req(num, den)
 
-      if (input$estimator == "ratio") {
+          vars <- design()$variables
 
-        num <- input$numerator
-        den <- input$denominator
-        shiny::req(num, den)
+          num_is_cat <- is.factor(vars[[num]]) || is.character(vars[[num]])
+          den_is_cat <- is.factor(vars[[den]]) || is.character(vars[[den]])
 
-        vars <- design()$variables
-
-        num_is_cat <- is.factor(vars[[num]]) || is.character(vars[[num]])
-        den_is_cat <- is.factor(vars[[den]]) || is.character(vars[[den]])
-
-        return(
-          estimate_survey(
-            design          = des,
-            estimator       = "ratio",
-            by              = domain,
-            numerator       = num,
-            denominator     = den,
-            ratio_num_level = if (num_is_cat) input$ratio_num_level else NULL,
-            ratio_den_level = if (den_is_cat) input$ratio_den_level else NULL
+          return(
+            estimate_survey(
+              design          = des,
+              estimator       = "ratio",
+              by              = domain,
+              numerator       = num,
+              denominator     = den,
+              ratio_num_level = if (num_is_cat) input$ratio_num_level else NULL,
+              ratio_den_level = if (den_is_cat) input$ratio_den_level else NULL
+            )
           )
-        )
-      }
+        }
 
-      if (input$estimator == "quantile") {
+        if (input$estimator == "quantile") {
+          shiny::req(input$y_var)
+          probs <- trimws(unlist(strsplit(input$probs, ",")))
+          probs <- sort(unique(as.numeric(probs)))
+          shiny::req(length(probs) > 0, !any(is.na(probs)))
+
+          return(
+            estimate_survey(
+              design    = des,
+              estimator = "quantile",
+              variable  = input$y_var,
+              by        = domain,
+              probs     = probs
+            )
+          )
+        }
 
         shiny::req(input$y_var)
-        probs <- trimws(unlist(strsplit(input$probs, ",")))
-        probs <- sort(unique(as.numeric(probs)))
-        shiny::req(length(probs) > 0, !any(is.na(probs)))
-
-        return(
-          estimate_survey(
-            design    = des,
-            estimator = "quantile",
-            variable  = input$y_var,
-            by        = domain,
-            probs     = probs
-          )
+        estimate_survey(
+          design    = des,
+          estimator = input$estimator,
+          variable  = input$y_var,
+          by        = domain
         )
-      }
-
-      shiny::req(input$y_var)
-      estimate_survey(
-        design    = des,
-        estimator = input$estimator,
-        variable  = input$y_var,
-        by        = domain
-      )
-
-    }, ignoreInit = TRUE)
+      },
+      ignoreInit = TRUE
+    )
 
     # --------------------------------------------------
     # 6. Outputs
@@ -907,9 +910,11 @@ mod_estimacion_server <- function(id, design, dict) {
             input$domain_vars
           }
         ),
-        c(i18n_t(d, "mod_estimacion.var_interes"),
+        c(
+          i18n_t(d, "mod_estimacion.var_interes"),
           i18n_t(d, "mod_estimacion.tipo_est"),
-          i18n_t(d, "mod_estimacion.dominios"))
+          i18n_t(d, "mod_estimacion.dominios")
+        )
       )
     })
 
@@ -929,17 +934,19 @@ mod_estimacion_server <- function(id, design, dict) {
 
     list(
       results = shiny::reactive(results_r()),
-      meta    = shiny::reactive({
+      meta = shiny::reactive({
         res <- results_r()
-        if (is.null(res)) return(NULL)
+        if (is.null(res)) {
+          return(NULL)
+        }
         list(
           estimator = input$estimator,
-          variable  = if (input$estimator != "ratio") {
+          variable = if (input$estimator != "ratio") {
             input$y_var
           } else {
             paste0(input$numerator, " / ", input$denominator)
           },
-          domains   = {
+          domains = {
             d <- input$domain_vars
             if (length(d) == 0 || all(d == "")) character(0) else d
           },

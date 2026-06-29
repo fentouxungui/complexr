@@ -47,13 +47,12 @@
 #'
 #' @export
 read_survey_data <- function(
-    path,
-    col_types = NULL,
-    guess_max = 10000,
-    encoding  = "UTF-8",
-    sheet     = 1
+  path,
+  col_types = NULL,
+  guess_max = 10000,
+  encoding = "UTF-8",
+  sheet = 1
 ) {
-
   if (!is.character(path) || length(path) != 1) {
     rlang::abort("`path` must be a single character string.")
   }
@@ -67,44 +66,32 @@ read_survey_data <- function(
 
   ext <- tolower(tools::file_ext(path))
 
-  data <- switch(
-    ext,
-
+  data <- switch(ext,
     "csv" = readr::read_csv(
       path,
-      col_types     = col_types,
-      guess_max     = guess_max,
-      locale        = readr::locale(encoding = encoding),
+      col_types = col_types,
+      guess_max = guess_max,
+      locale = readr::locale(encoding = encoding),
       show_col_types = FALSE,
-      progress      = FALSE
+      progress = FALSE
     ),
-
     "tsv" = ,
     "txt" = readr::read_tsv(
       path,
-      col_types     = col_types,
-      guess_max     = guess_max,
-      locale        = readr::locale(encoding = encoding),
+      col_types = col_types,
+      guess_max = guess_max,
+      locale = readr::locale(encoding = encoding),
       show_col_types = FALSE,
-      progress      = FALSE
+      progress = FALSE
     ),
-
     "xlsx" = readxl::read_xlsx(path, sheet = sheet),
-
-    "xls"  = readxl::read_xls(path, sheet = sheet),
-
-    "sav"  = haven::read_sav(path),
-
-    "por"  = haven::read_por(path),
-
-    "dta"  = haven::read_dta(path),
-
+    "xls" = readxl::read_xls(path, sheet = sheet),
+    "sav" = haven::read_sav(path),
+    "por" = haven::read_por(path),
+    "dta" = haven::read_dta(path),
     "sas7bdat" = haven::read_sas(path),
-
-    "xpt"  = haven::read_xpt(path),
-
-    "rds"  = readRDS(path),
-
+    "xpt" = haven::read_xpt(path),
+    "rds" = readRDS(path),
     rlang::abort(
       message = paste0(
         "Unsupported file format: .", ext,
@@ -119,12 +106,13 @@ read_survey_data <- function(
     data <- tibble::as_tibble(data)
   }
 
-  attr(data, "source_path")   <- normalizePath(
-    path, winslash = "/", mustWork = FALSE
+  attr(data, "source_path") <- normalizePath(
+    path,
+    winslash = "/", mustWork = FALSE
   )
   attr(data, "source_format") <- ext
-  attr(data, "n_rows")        <- nrow(data)
-  attr(data, "n_cols")        <- ncol(data)
+  attr(data, "n_rows") <- nrow(data)
+  attr(data, "n_cols") <- ncol(data)
 
   data
 }

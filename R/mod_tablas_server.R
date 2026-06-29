@@ -1,10 +1,8 @@
 mod_tablas_server <- function(id, est_results, est_meta,
                               inf_results = shiny::reactive(NULL),
-                              inf_meta    = shiny::reactive(NULL),
+                              inf_meta = shiny::reactive(NULL),
                               dict) {
-
   shiny::moduleServer(id, function(input, output, session) {
-
     ns <- session$ns
 
     # ---- Etiquetas estaticas ----
@@ -23,62 +21,70 @@ mod_tablas_server <- function(id, est_results, est_meta,
 
     # ---- Almacenamiento reactivo ----
     tables_store <- shiny::reactiveValues(items = list())
-    counter      <- shiny::reactiveVal(0L)
+    counter <- shiny::reactiveVal(0L)
 
     # IDs de outputs ya registrados (se vive en el closure del moduleServer)
     registered_outputs <- character(0)
 
     # ---- Capturar nuevo resultado de estimacion ----
-    shiny::observeEvent(est_results(), {
-      res  <- est_results()
-      meta <- est_meta()
-      shiny::req(res)
+    shiny::observeEvent(est_results(),
+      {
+        res <- est_results()
+        meta <- est_meta()
+        shiny::req(res)
 
-      n       <- counter() + 1L
-      counter(n)
-      item_id <- paste0("est_", n)
+        n <- counter() + 1L
+        counter(n)
+        item_id <- paste0("est_", n)
 
-      tables_store$items[[item_id]] <- list(
-        n    = n,
-        meta = if (is.null(meta)) {
-          list(
-            estimator = "?",
-            variable  = "",
-            domains   = character(0),
-            timestamp = Sys.time()
-          )
-        } else {
-          meta
-        },
-        data = res
-      )
-    }, ignoreNULL = TRUE, ignoreInit = TRUE)
+        tables_store$items[[item_id]] <- list(
+          n = n,
+          meta = if (is.null(meta)) {
+            list(
+              estimator = "?",
+              variable  = "",
+              domains   = character(0),
+              timestamp = Sys.time()
+            )
+          } else {
+            meta
+          },
+          data = res
+        )
+      },
+      ignoreNULL = TRUE,
+      ignoreInit = TRUE
+    )
 
     # ---- Capturar nuevo resultado de inferencia ----
-    shiny::observeEvent(inf_results(), {
-      res  <- inf_results()
-      meta <- inf_meta()
-      shiny::req(res)
+    shiny::observeEvent(inf_results(),
+      {
+        res <- inf_results()
+        meta <- inf_meta()
+        shiny::req(res)
 
-      n       <- counter() + 1L
-      counter(n)
-      item_id <- paste0("inf_", n)
+        n <- counter() + 1L
+        counter(n)
+        item_id <- paste0("inf_", n)
 
-      tables_store$items[[item_id]] <- list(
-        n    = n,
-        meta = if (is.null(meta)) {
-          list(
-            estimator = "Inferencia",
-            variable  = "",
-            domains   = character(0),
-            timestamp = Sys.time()
-          )
-        } else {
-          meta
-        },
-        data = res
-      )
-    }, ignoreNULL = TRUE, ignoreInit = TRUE)
+        tables_store$items[[item_id]] <- list(
+          n = n,
+          meta = if (is.null(meta)) {
+            list(
+              estimator = "Inferencia",
+              variable  = "",
+              domains   = character(0),
+              timestamp = Sys.time()
+            )
+          } else {
+            meta
+          },
+          data = res
+        )
+      },
+      ignoreNULL = TRUE,
+      ignoreInit = TRUE
+    )
 
     # ---- Limpiar todo ----
     shiny::observeEvent(input$clear_all, {
@@ -107,8 +113,11 @@ mod_tablas_server <- function(id, est_results, est_meta,
         fmt <- input$export_format_all
         if (is.null(fmt)) fmt <- "csv"
         ext <- switch(fmt,
-          "xlsx" = ".xlsx", "rds" = ".rds",
-          "json" = ".json", "txt" = ".txt", ".csv"
+          "xlsx" = ".xlsx",
+          "rds" = ".rds",
+          "json" = ".json",
+          "txt" = ".txt",
+          ".csv"
         )
         paste0("estimaciones_", format(Sys.time(), "%Y%m%d_%H%M%S"), ext)
       },
@@ -120,14 +129,14 @@ mod_tablas_server <- function(id, est_results, est_meta,
 
         all_data <- lapply(names(items), function(iid) {
           item <- items[[iid]]
-          df   <- item$data
+          df <- item$data
           meta <- item$meta
-          df$tabla_id  <- item$n
+          df$tabla_id <- item$n
           df$estimador <- meta$estimator
-          df$variable  <- if (nchar(meta$variable) > 0) meta$variable else ""
-          df$dominios  <- if (
+          df$variable <- if (nchar(meta$variable) > 0) meta$variable else ""
+          df$dominios <- if (
             length(meta$domains) > 0 &&
-            !all(meta$domains == "")
+              !all(meta$domains == "")
           ) {
             paste(meta$domains, collapse = ", ")
           } else {
@@ -140,10 +149,11 @@ mod_tablas_server <- function(id, est_results, est_meta,
 
         switch(fmt,
           "xlsx" = writexl::write_xlsx(combined, file),
-          "rds"  = saveRDS(combined, file),
+          "rds" = saveRDS(combined, file),
           "json" = jsonlite::write_json(combined, file, pretty = TRUE),
-          "txt"  = utils::write.table(
-            combined, file, sep = "	", row.names = FALSE
+          "txt" = utils::write.table(
+            combined, file,
+            sep = "	", row.names = FALSE
           ),
           utils::write.csv(combined, file, row.names = FALSE)
         )
@@ -152,7 +162,7 @@ mod_tablas_server <- function(id, est_results, est_meta,
 
     # ---- Registrar output DT + descarga por tabla (solo IDs nuevos) ----
     shiny::observe({
-      items   <- tables_store$items
+      items <- tables_store$items
       new_ids <- setdiff(names(items), registered_outputs)
 
       for (item_id in new_ids) {
@@ -177,11 +187,16 @@ mod_tablas_server <- function(id, est_results, est_meta,
               fmt <- input[[paste0("fmt_", lid)]]
               if (is.null(fmt)) fmt <- "csv"
               ext <- switch(fmt,
-                "xlsx" = ".xlsx", "rds" = ".rds",
-                "json" = ".json", "txt" = ".txt", ".csv"
+                "xlsx" = ".xlsx",
+                "rds" = ".rds",
+                "json" = ".json",
+                "txt" = ".txt",
+                ".csv"
               )
-              paste0("estimacion_", lid, "_",
-                     format(Sys.time(), "%Y%m%d_%H%M%S"), ext)
+              paste0(
+                "estimacion_", lid, "_",
+                format(Sys.time(), "%Y%m%d_%H%M%S"), ext
+              )
             },
             content = function(file) {
               item <- tables_store$items[[lid]]
@@ -191,10 +206,11 @@ mod_tablas_server <- function(id, est_results, est_meta,
 
               switch(fmt,
                 "xlsx" = writexl::write_xlsx(item$data, file),
-                "rds"  = saveRDS(item$data, file),
+                "rds" = saveRDS(item$data, file),
                 "json" = jsonlite::write_json(item$data, file, pretty = TRUE),
-                "txt"  = utils::write.table(
-                  item$data, file, sep = "	", row.names = FALSE
+                "txt" = utils::write.table(
+                  item$data, file,
+                  sep = "	", row.names = FALSE
                 ),
                 utils::write.csv(item$data, file, row.names = FALSE)
               )
@@ -208,7 +224,7 @@ mod_tablas_server <- function(id, est_results, est_meta,
     # ---- UI principal: pestanas dinamicas ----
     output$tabs_ui <- shiny::renderUI({
       items <- tables_store$items
-      d     <- dict()
+      d <- dict()
 
       if (length(items) == 0) {
         return(
@@ -236,11 +252,13 @@ mod_tablas_server <- function(id, est_results, est_meta,
       # Etiquetas i18n de estimadores
       # (reutiliza claves del modulo de estimacion)
       est_labels <- stats::setNames(
-        c(i18n_t(d, "mod_estimacion.mean"),
+        c(
+          i18n_t(d, "mod_estimacion.mean"),
           i18n_t(d, "mod_estimacion.total"),
           i18n_t(d, "mod_estimacion.prop"),
           i18n_t(d, "mod_estimacion.ratio"),
-          i18n_t(d, "mod_estimacion.quantile")),
+          i18n_t(d, "mod_estimacion.quantile")
+        ),
         c("mean", "total", "prop", "ratio", "quantile")
       )
 
@@ -249,9 +267,9 @@ mod_tablas_server <- function(id, est_results, est_meta,
         item <- items[[item_id]]
         meta <- item$meta
 
-        est_lbl   <- est_labels[meta$estimator]
+        est_lbl <- est_labels[meta$estimator]
         if (is.na(est_lbl)) est_lbl <- meta$estimator
-        var_part  <- if (nchar(meta$variable) > 0) {
+        var_part <- if (nchar(meta$variable) > 0) {
           paste0(" \u00b7 ", meta$variable)
         } else {
           ""
@@ -267,7 +285,6 @@ mod_tablas_server <- function(id, est_results, est_meta,
         shiny::tabPanel(
           title = tab_title,
           value = item_id,
-
           shiny::br(),
 
           # Fila de metadatos
@@ -275,7 +292,6 @@ mod_tablas_server <- function(id, est_results, est_meta,
             class = "well",
             style = "padding:12px 16px; margin-bottom:16px; display:flex;
                      gap:32px; flex-wrap:wrap; font-size:13px;",
-
             shiny::div(
               shiny::tags$small(
                 i18n_t(d, "mod_tablas.estimator_lbl"),
@@ -284,7 +300,6 @@ mod_tablas_server <- function(id, est_results, est_meta,
               ),
               shiny::tags$strong(est_lbl)
             ),
-
             shiny::div(
               shiny::tags$small(
                 i18n_t(d, "mod_tablas.variable_lbl"),
@@ -295,7 +310,6 @@ mod_tablas_server <- function(id, est_results, est_meta,
                 if (nchar(meta$variable) > 0) meta$variable else "\u2014"
               )
             ),
-
             shiny::div(
               shiny::tags$small(
                 i18n_t(d, "mod_tablas.domains_lbl"),
@@ -304,7 +318,6 @@ mod_tablas_server <- function(id, est_results, est_meta,
               ),
               shiny::tags$strong(dom_text)
             ),
-
             shiny::div(
               shiny::tags$small(
                 i18n_t(d, "mod_tablas.timestamp_lbl"),
@@ -313,7 +326,6 @@ mod_tablas_server <- function(id, est_results, est_meta,
               ),
               shiny::tags$strong(format(meta$timestamp, "%H:%M:%S"))
             ),
-
             shiny::div(
               shiny::tags$small(
                 i18n_t(d, "mod_tablas.rows_lbl"),
@@ -331,24 +343,25 @@ mod_tablas_server <- function(id, est_results, est_meta,
               " align-items:center; flex-wrap:wrap;"
             ),
             shiny::selectInput(
-              inputId  = ns(paste0("fmt_", item_id)),
-              label    = NULL,
-              choices  = c("CSV" = "csv", "Excel (.xlsx)" = "xlsx",
-                           "R Data (.rds)" = "rds", "JSON (.json)" = "json",
-                           "TXT (tab)" = "txt"),
+              inputId = ns(paste0("fmt_", item_id)),
+              label = NULL,
+              choices = c(
+                "CSV" = "csv", "Excel (.xlsx)" = "xlsx",
+                "R Data (.rds)" = "rds", "JSON (.json)" = "json",
+                "TXT (tab)" = "txt"
+              ),
               selected = "csv",
-              width    = "140px"
+              width = "140px"
             ),
             shiny::downloadButton(
               outputId = ns(paste0("dl_", item_id)),
-              label    = shiny::tagList(
+              label = shiny::tagList(
                 shiny::tags$i(class = "fa fa-download"),
                 paste0(" ", i18n_t(d, "mod_tablas.download_table"))
               ),
               class = "btn-sm"
             )
           ),
-
           shiny::br(), shiny::br(),
 
           # Tabla de datos

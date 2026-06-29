@@ -1,7 +1,5 @@
 mod_diseno_server <- function(id, data, dict) {
-
   shiny::moduleServer(id, function(input, output, session) {
-
     ns <- session$ns
 
     # -------------------------------------------------
@@ -44,12 +42,14 @@ mod_diseno_server <- function(id, data, dict) {
     shiny::observe({
       d <- dict()
       shiny::updateSelectInput(session, "design_type",
-        label   = i18n_t(d, "mod_diseno.design_type"),
+        label = i18n_t(d, "mod_diseno.design_type"),
         choices = stats::setNames(
           c("srs", "stratified", "cluster"),
-          c(i18n_t(d, "mod_diseno.srs"),
+          c(
+            i18n_t(d, "mod_diseno.srs"),
             i18n_t(d, "mod_diseno.stratified"),
-            i18n_t(d, "mod_diseno.cluster"))
+            i18n_t(d, "mod_diseno.cluster")
+          )
         )
       )
     })
@@ -58,13 +58,10 @@ mod_diseno_server <- function(id, data, dict) {
     # 1. Theory panel (MathJax)
     # -------------------------------------------------
     output$design_theory <- shiny::renderUI({
-
       shiny::req(input$design_type)
       d <- dict()
 
-      switch(
-        input$design_type,
-
+      switch(input$design_type,
         "srs" = shiny::tagList(
           shiny::withMathJax(),
           shiny::h5(i18n_t(d, "mod_diseno.theory.srs.title")),
@@ -94,7 +91,6 @@ mod_diseno_server <- function(id, data, dict) {
             )
           )
         ),
-
         "stratified" = shiny::tagList(
           shiny::withMathJax(),
           shiny::h5(i18n_t(d, "mod_diseno.theory.stratified.title")),
@@ -126,7 +122,6 @@ mod_diseno_server <- function(id, data, dict) {
             )
           )
         ),
-
         "cluster" = shiny::tagList(
           shiny::withMathJax(),
           shiny::h5(i18n_t(d, "mod_diseno.theory.cluster.title")),
@@ -160,47 +155,57 @@ mod_diseno_server <- function(id, data, dict) {
     # 2. Dynamic design arguments
     # -------------------------------------------------
     output$design_arguments <- shiny::renderUI({
-
       shiny::req(data())
       vars <- names(data())
-      d    <- dict()
+      d <- dict()
 
-      switch(
-        input$design_type,
-
+      switch(input$design_type,
         "srs" = shiny::tagList(
           shiny::selectInput(ns("weight_var"),
-            i18n_t(d, "mod_diseno.weight_var"), choices = vars,
-            width = "400px")
+            i18n_t(d, "mod_diseno.weight_var"),
+            choices = vars,
+            width = "400px"
+          )
         ),
-
         "stratified" = shiny::tagList(
           shiny::selectInput(ns("strata_var"),
-            i18n_t(d, "mod_diseno.strata_var"), choices = vars,width = "400px"),
+            i18n_t(d, "mod_diseno.strata_var"),
+            choices = vars, width = "400px"
+          ),
           shiny::selectInput(ns("weight_var"),
-            i18n_t(d, "mod_diseno.weight_var"), choices = vars,width = "400px")
+            i18n_t(d, "mod_diseno.weight_var"),
+            choices = vars, width = "400px"
+          )
         ),
-
         "cluster" = shiny::tagList(
           shiny::numericInput(ns("n_stages"),
-            i18n_t(d, "mod_diseno.n_stages"), value = 2, min = 1, max = 5),
+            i18n_t(d, "mod_diseno.n_stages"),
+            value = 2, min = 1, max = 5
+          ),
           shiny::uiOutput(ns("stage_clusters")),
           shiny::selectInput(ns("strata_var"),
             i18n_t(d, "mod_diseno.strata"),
-            choices = c(stats::setNames("", i18n_t(d, "mod_diseno.none")),
-                        vars),width = "400px"),
+            choices = c(
+              stats::setNames("", i18n_t(d, "mod_diseno.none")),
+              vars
+            ), width = "400px"
+          ),
           shiny::selectInput(ns("weight_var"),
-            i18n_t(d, "mod_diseno.weight_var"), choices = vars,width = "400px"),
+            i18n_t(d, "mod_diseno.weight_var"),
+            choices = vars, width = "400px"
+          ),
           shiny::selectInput(
             ns("lonely_psu"),
             i18n_t(d, "mod_diseno.lonely_psu"),
             choices = stats::setNames(
               c("adjust", "average", "certainty"),
-              c(i18n_t(d, "mod_diseno.lonely_adjust"),
+              c(
+                i18n_t(d, "mod_diseno.lonely_adjust"),
                 i18n_t(d, "mod_diseno.lonely_average"),
-                i18n_t(d, "mod_diseno.lonely_certainty"))
+                i18n_t(d, "mod_diseno.lonely_certainty")
+              )
             ),
-            selected = "adjust",width = "400px"
+            selected = "adjust", width = "400px"
           )
         )
       )
@@ -210,10 +215,9 @@ mod_diseno_server <- function(id, data, dict) {
     # 3. Dynamic stage cluster inputs
     # -------------------------------------------------
     output$stage_clusters <- shiny::renderUI({
-
       shiny::req(input$n_stages, data())
       vars <- names(data())
-      d    <- dict()
+      d <- dict()
 
       lapply(seq_len(input$n_stages), function(i) {
         shiny::selectInput(
@@ -228,7 +232,9 @@ mod_diseno_server <- function(id, data, dict) {
     # 4. Helper
     # -------------------------------------------------
     clean_input <- function(x) {
-      if (is.null(x) || length(x) == 0 || nchar(trimws(x)) == 0) return(NULL)
+      if (is.null(x) || length(x) == 0 || nchar(trimws(x)) == 0) {
+        return(NULL)
+      }
       x
     }
 
@@ -237,84 +243,84 @@ mod_diseno_server <- function(id, data, dict) {
     # -------------------------------------------------
     log_design <- shiny::reactiveVal(NULL)
 
-    shiny::observeEvent(input$design_type, {
-      log_design(NULL)
-    }, ignoreInit = TRUE)
+    shiny::observeEvent(input$design_type,
+      {
+        log_design(NULL)
+      },
+      ignoreInit = TRUE
+    )
 
     # -------------------------------------------------
     # 6. Build design
     # -------------------------------------------------
-    design_r <- shiny::eventReactive(input$build, {
+    design_r <- shiny::eventReactive(input$build,
+      {
+        df <- data()
+        shiny::req(df, input$design_type, input$weight_var)
 
-      df <- data()
-      shiny::req(df, input$design_type, input$weight_var)
+        weight <- input$weight_var
+        strata <- clean_input(input$strata_var)
 
-      weight <- input$weight_var
-      strata <- clean_input(input$strata_var)
+        tryCatch(
+          {
+            des <- if (input$design_type == "srs") {
+              formula_design <- paste0(
+                "svydesign(id=~1, weights=~",
+                weight, ", data=data)"
+              )
+              as_survey_design_tbl(data = df, weight = weight)
+            } else if (input$design_type == "stratified") {
+              shiny::req(strata)
+              formula_design <- paste0(
+                "svydesign(id=~1, strata=~", strata,
+                ", weights=~", weight, ", data=data)"
+              )
+              as_survey_design_tbl(data = df, weight = weight, strata = strata)
+            } else {
+              clusters <- vapply(
+                seq_len(input$n_stages),
+                function(i) input[[paste0("cluster_stage_", i)]],
+                character(1)
+              )
+              lonely <- input$lonely_psu
+              if (!is.null(lonely) && nchar(lonely) > 0) {
+                options(survey.lonely.psu = lonely)
+              }
 
-      tryCatch({
+              formula_design <- paste0(
+                "svydesign(id=~", paste(clusters, collapse = "+"),
+                if (!is.null(strata)) paste0(", strata=~", strata) else "",
+                ", weights=~", weight, ", nest=TRUE, data=data)"
+              )
 
-        des <- if (input$design_type == "srs") {
+              as_survey_design_tbl(
+                data    = df,
+                weight  = weight,
+                strata  = strata,
+                cluster = clusters[1],
+                nest    = TRUE
+              )
+            }
 
-          formula_design <- paste0(
-            "svydesign(id=~1, weights=~",
-            weight, ", data=data)"
-          )
-          as_survey_design_tbl(data = df, weight = weight)
+            log_design(list(
+              tipo       = input$design_type,
+              formula_R  = formula_design,
+              lonely_psu = input$lonely_psu
+            ))
 
-        } else if (input$design_type == "stratified") {
-
-          shiny::req(strata)
-          formula_design <- paste0(
-            "svydesign(id=~1, strata=~", strata,
-            ", weights=~", weight, ", data=data)"
-          )
-          as_survey_design_tbl(data = df, weight = weight, strata = strata)
-
-        } else {
-
-          clusters <- vapply(
-            seq_len(input$n_stages),
-            function(i) input[[paste0("cluster_stage_", i)]],
-            character(1)
-          )
-          lonely <- input$lonely_psu
-          if (!is.null(lonely) && nchar(lonely) > 0) {
-            options(survey.lonely.psu = lonely)
+            des
+          },
+          error = function(e) {
+            shiny::showNotification(
+              paste(i18n_t(dict(), "mod_diseno.error_build"), conditionMessage(e)),
+              type = "error", duration = 8
+            )
+            NULL
           }
-
-          formula_design <- paste0(
-            "svydesign(id=~", paste(clusters, collapse = "+"),
-            if (!is.null(strata)) paste0(", strata=~", strata) else "",
-            ", weights=~", weight, ", nest=TRUE, data=data)"
-          )
-
-          as_survey_design_tbl(
-            data    = df,
-            weight  = weight,
-            strata  = strata,
-            cluster = clusters[1],
-            nest    = TRUE
-          )
-        }
-
-        log_design(list(
-          tipo       = input$design_type,
-          formula_R  = formula_design,
-          lonely_psu = input$lonely_psu
-        ))
-
-        des
-
-      }, error = function(e) {
-        shiny::showNotification(
-          paste(i18n_t(dict(), "mod_diseno.error_build"), conditionMessage(e)),
-          type = "error", duration = 8
         )
-        NULL
-      })
-
-    }, ignoreInit = TRUE)
+      },
+      ignoreInit = TRUE
+    )
 
     # -------------------------------------------------
     # 7. R code output
@@ -334,13 +340,16 @@ mod_diseno_server <- function(id, data, dict) {
     # -------------------------------------------------
     # 9. Diagnostic table
     # -------------------------------------------------
-    output$summary <- shiny::renderTable({
-      shiny::req(design_r())
-      tryCatch(
-        describe_survey_design(design_r()),
-        error = function(e) NULL
-      )
-    }, digits = 2)
+    output$summary <- shiny::renderTable(
+      {
+        shiny::req(design_r())
+        tryCatch(
+          describe_survey_design(design_r()),
+          error = function(e) NULL
+        )
+      },
+      digits = 2
+    )
 
     # -------------------------------------------------
     # 10. Variables sub-module (wired after design is built)
@@ -353,6 +362,5 @@ mod_diseno_server <- function(id, data, dict) {
     return(list(
       design = vars_res$design
     ))
-
   })
 }

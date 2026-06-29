@@ -1,6 +1,5 @@
 mod_datos_server <- function(id, dict) {
   shiny::moduleServer(id, function(input, output, session) {
-
     output$title <- shiny::renderText({
       i18n_t(dict(), "mod_datos.title")
     })
@@ -27,7 +26,7 @@ mod_datos_server <- function(id, dict) {
       shiny::tagList(
         shiny::fileInput(
           session$ns("file"),
-          label  = i18n_t(dict(), "mod_datos.file_label"),
+          label = i18n_t(dict(), "mod_datos.file_label"),
           accept = c(
             ".csv", ".tsv", ".txt",
             ".xlsx", ".xls",
@@ -58,34 +57,39 @@ mod_datos_server <- function(id, dict) {
       )
     })
 
-    shiny::observeEvent(input$file, {
+    shiny::observeEvent(input$file,
+      {
+        req(input$file)
 
-      req(input$file)
+        ext <- tolower(tools::file_ext(input$file$name))
+        tmp <- paste0(input$file$datapath, ".", ext)
+        file.copy(input$file$datapath, tmp)
+        on.exit(unlink(tmp), add = TRUE)
 
-      ext <- tolower(tools::file_ext(input$file$name))
-      tmp <- paste0(input$file$datapath, ".", ext)
-      file.copy(input$file$datapath, tmp)
-      on.exit(unlink(tmp), add = TRUE)
-
-      tryCatch({
-        df      <- read_survey_data(tmp)
-        data_r(df)
-      }, error = function(e) {
-        shiny::showNotification(
-          paste(i18n_t(dict(), "mod_datos.load_error"), conditionMessage(e)),
-          type     = "error",
-          duration = 10
+        tryCatch(
+          {
+            df <- read_survey_data(tmp)
+            data_r(df)
+          },
+          error = function(e) {
+            shiny::showNotification(
+              paste(i18n_t(dict(), "mod_datos.load_error"), conditionMessage(e)),
+              type     = "error",
+              duration = 10
+            )
+          }
         )
-      })
+      },
+      ignoreInit = TRUE
+    )
 
-    }, ignoreInit = TRUE)
-
-    shiny::observeEvent(input$load_example, {
-
-      df <- complexr::generate_example_data()
-      data_r(df)
-
-    }, ignoreInit = TRUE)
+    shiny::observeEvent(input$load_example,
+      {
+        df <- complexr::generate_example_data()
+        data_r(df)
+      },
+      ignoreInit = TRUE
+    )
 
     output$preview <- DT::renderDT({
       req(data_r())
@@ -93,7 +97,6 @@ mod_datos_server <- function(id, dict) {
     })
 
     output$log <- shiny::renderPrint({
-
       if (is.null(data_r())) {
         return(i18n_t(dict(), "mod_datos.no_data"))
       }
@@ -101,14 +104,18 @@ mod_datos_server <- function(id, dict) {
       d <- dict()
       stats::setNames(
         list(nrow(data_r()), ncol(data_r()), names(data_r())),
-        c(i18n_t(d, "mod_datos.log_rows"),
+        c(
+          i18n_t(d, "mod_datos.log_rows"),
           i18n_t(d, "mod_datos.log_cols"),
-          i18n_t(d, "mod_datos.log_vars"))
+          i18n_t(d, "mod_datos.log_vars")
+        )
       )
     })
 
     return(list(
-      data = shiny::reactive({ data_r() })
+      data = shiny::reactive({
+        data_r()
+      })
     ))
   })
 }

@@ -5,15 +5,17 @@
 #' @param session Shiny session
 
 app_server <- function(input, output, session) {
-
   # =========================
   # Idioma reactivo global
   # =========================
   lang <- shiny::reactiveVal("es")
 
-  shiny::observeEvent(input$lang, {
-    lang(input$lang)
-  }, ignoreInit = TRUE)
+  shiny::observeEvent(input$lang,
+    {
+      lang(input$lang)
+    },
+    ignoreInit = TRUE
+  )
 
   # =========================
   # Diccionario reactivo
@@ -76,9 +78,7 @@ app_server <- function(input, output, session) {
   })
 
   output$app_footer <- shiny::renderText({
-
     i18n_t(dict(), "app.footer")
-
   })
   output$btn_exit <- shiny::renderText({
     i18n_t(dict(), "app.exit_btn")

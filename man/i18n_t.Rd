@@ -24,7 +24,7 @@ so the interface degrades gracefully on missing translations.
 \examples{
 dict <- i18n_load("en")
 i18n_t(dict, "mod_datos.title")
-i18n_t(dict, "nonexistent.key")  # returns "nonexistent.key"
+i18n_t(dict, "nonexistent.key") # returns "nonexistent.key"
 
 }
 \seealso{

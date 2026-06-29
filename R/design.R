@@ -136,31 +136,30 @@
 #' )
 #'
 #' @export
-#' 
+#'
 as_survey_design_tbl <- function(
-    data,
-    weight,
-    strata = NULL,
-    cluster = NULL,
-    fpc = NULL,
-    nest = TRUE,
-    check_psu = TRUE
+  data,
+  weight,
+  strata = NULL,
+  cluster = NULL,
+  fpc = NULL,
+  nest = TRUE,
+  check_psu = TRUE
 ) {
-  
   # ---------------------------------------------------------
   # 1. Input validation
   # ---------------------------------------------------------
   if (!tibble::is_tibble(data)) {
     rlang::abort("`data` must be a tibble.")
   }
-  
+
   if (!is.character(weight) || length(weight) != 1) {
     rlang::abort("`weight` must be a single character string.")
   }
-  
+
   vars_required <- c(weight, strata, cluster, fpc)
   vars_required <- vars_required[!is.null(vars_required)]
-  
+
   missing_vars <- setdiff(vars_required, names(data))
   if (length(missing_vars) > 0) {
     rlang::abort(
@@ -171,30 +170,29 @@ as_survey_design_tbl <- function(
       class = "shinycomplexsurvey_missing_design_vars"
     )
   }
-  
+
   # ---------------------------------------------------------
   # 2. Weight checks
   # ---------------------------------------------------------
   if (any(is.na(data[[weight]]))) {
     rlang::abort("Weights contain missing values.")
   }
-  
+
   if (any(data[[weight]] <= 0)) {
     rlang::abort("Weights must be strictly positive.")
   }
-  
+
   # ---------------------------------------------------------
   # 3. PSU–strata consistency check (mejora agregada)
   # ---------------------------------------------------------
   if (check_psu && !is.null(cluster) && !is.null(strata)) {
-    
     psu_check <- data |>
       dplyr::distinct(
         .data[[cluster]],
         .data[[strata]]
       ) |>
       dplyr::count(.data[[cluster]])
-    
+
     if (any(psu_check$n > 1) && !nest) {
       warning(
         "Some PSUs appear in multiple strata. ",
@@ -202,15 +200,15 @@ as_survey_design_tbl <- function(
       )
     }
   }
-  
+
   # ---------------------------------------------------------
   # 4. Build formulas
   # ---------------------------------------------------------
-  w  <- stats::as.formula(paste0("~", weight))
+  w <- stats::as.formula(paste0("~", weight))
   id <- if (!is.null(cluster)) stats::as.formula(paste0("~", cluster)) else ~1
-  st <- if (!is.null(strata))  stats::as.formula(paste0("~", strata))  else NULL
-  fp <- if (!is.null(fpc))     stats::as.formula(paste0("~", fpc))     else NULL
-  
+  st <- if (!is.null(strata)) stats::as.formula(paste0("~", strata)) else NULL
+  fp <- if (!is.null(fpc)) stats::as.formula(paste0("~", fpc)) else NULL
+
   # ---------------------------------------------------------
   # 5. Build survey design
   # Lonely PSU option: when a stratum has a single PSU, variance
@@ -229,12 +227,12 @@ as_survey_design_tbl <- function(
     data    = data,
     nest    = nest
   )
-  
+
   # ---------------------------------------------------------
   # 6. Convert to srvyr
   # ---------------------------------------------------------
   design_tbl <- srvyr::as_survey(design)
-  
+
   # ---------------------------------------------------------
   # 7. Metadata
   # ---------------------------------------------------------
@@ -245,7 +243,7 @@ as_survey_design_tbl <- function(
     fpc     = fpc,
     nest    = nest
   )
-  
+
   design_tbl
 }
 
@@ -296,59 +294,58 @@ as_survey_design_tbl <- function(
 #' )
 #' describe_survey_design(design)
 describe_survey_design <- function(design) {
-  
   # ---------------------------------------------------------
   # 1. Validation
   # ---------------------------------------------------------
   if (!inherits(design, "tbl_svy")) {
     rlang::abort("`design` must be a srvyr tbl_svy object.")
   }
-  
+
   # metadata del diseño
   design_vars <- attr(design, "design_vars")
-  
+
   if (is.null(design_vars)) {
     rlang::abort(
       "Design metadata not found. Use `as_survey_design_tbl()`."
     )
   }
-  
+
   data <- design$variables
-  
-  weight_var  <- design_vars$weight
-  strata_var  <- design_vars$strata
+
+  weight_var <- design_vars$weight
+  strata_var <- design_vars$strata
   cluster_var <- design_vars$cluster
-  
+
   # ---------------------------------------------------------
   # 2. Weights
   # ---------------------------------------------------------
   w <- data[[weight_var]]
-  
+
   # ---------------------------------------------------------
   # 3. Dimensions
   # ---------------------------------------------------------
   n_obs <- nrow(data)
-  
+
   n_strata <- if (!is.null(strata_var)) {
     dplyr::n_distinct(data[[strata_var]])
   } else {
     NA_integer_
   }
-  
+
   n_clusters <- if (!is.null(cluster_var)) {
     dplyr::n_distinct(data[[cluster_var]])
   } else {
     NA_integer_
   }
-  
+
   # ---------------------------------------------------------
   # 4. Weight diagnostics
   # ---------------------------------------------------------
-  weight_min  <- min(w, na.rm = TRUE)
-  weight_max  <- max(w, na.rm = TRUE)
+  weight_min <- min(w, na.rm = TRUE)
+  weight_max <- max(w, na.rm = TRUE)
   weight_mean <- mean(w, na.rm = TRUE)
-  weight_cv   <- stats::sd(w, na.rm = TRUE) / weight_mean
-  
+  weight_cv <- stats::sd(w, na.rm = TRUE) / weight_mean
+
   # ---------------------------------------------------------
   # 5. Output
   # ---------------------------------------------------------

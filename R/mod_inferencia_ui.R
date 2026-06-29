@@ -2,7 +2,6 @@ mod_inferencia_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::fluidPage(
-
     # -- Encabezado --------------------------------------------------------
     shiny::tags$div(
       class = "page-header page-header--inferencia",
@@ -18,40 +17,35 @@ mod_inferencia_ui <- function(id) {
         )
       )
     ),
-
     shiny::fluidRow(
-
       # -- Columna izquierda: par\u00e1metros -----------------------------------
       shiny::column(
         3,
         shiny::wellPanel(
           class = "sidebar-card sidebar-card--inferencia",
-
           shiny::tags$div(
             class = "card-header-block card-header-block--inferencia",
             shiny::tags$i(class = "fa fa-sliders"),
             shiny::textOutput(ns("params_card"), inline = TRUE)
           ),
-
           shiny::tags$div(
             class = "card-body-block",
-
             shiny::selectInput(
               inputId = ns("analysis_type"),
-              label   = "Tipo de an\u00e1lisis",
+              label = "Tipo de an\u00e1lisis",
               choices = c(
-                "Coeficiente de Gini"  = "gini",
-                "Correlaci\u00f3n"     = "correlation",
+                "Coeficiente de Gini" = "gini",
+                "Correlaci\u00f3n" = "correlation",
                 "Prueba de hip\u00f3tesis" = "hyptest",
-                "Tablas cruzadas"      = "crosstable",
-                "Contrastes"           = "contrasts"
+                "Tablas cruzadas" = "crosstable",
+                "Contrastes" = "contrasts"
               )
             ),
 
             # -- Gini ----
             shiny::conditionalPanel(
               condition = sprintf("input['%s'] == 'gini'", ns("analysis_type")),
-              shiny::selectInput(ns("gini_var"),    label = "Variable",           choices = NULL),
+              shiny::selectInput(ns("gini_var"), label = "Variable", choices = NULL),
               shiny::selectInput(ns("gini_domain"), label = "Dominio (opcional)", choices = NULL)
             ),
 
@@ -65,7 +59,7 @@ mod_inferencia_ui <- function(id) {
             # -- Prueba de hip\u00f3tesis ----
             shiny::conditionalPanel(
               condition = sprintf("input['%s'] == 'hyptest'", ns("analysis_type")),
-              shiny::selectInput(ns("hyp_y"),     label = "Variable de respuesta (num\u00e9rica)", choices = NULL),
+              shiny::selectInput(ns("hyp_y"), label = "Variable de respuesta (num\u00e9rica)", choices = NULL),
               shiny::selectInput(ns("hyp_group"), label = "Variable de grupo (2 categor\u00edas)", choices = NULL)
             ),
 
@@ -76,11 +70,11 @@ mod_inferencia_ui <- function(id) {
               shiny::selectInput(ns("ct_col"), label = "Variable columna", choices = NULL),
               shiny::selectInput(
                 ns("ct_statistic"),
-                label   = "Estad\u00edstico de prueba",
+                label = "Estad\u00edstico de prueba",
                 choices = c(
-                  "F (Rao-Scott)"    = "F",
+                  "F (Rao-Scott)" = "F",
                   "Chi\u00b2 (Rao-Scott)" = "Chisq",
-                  "Wald"             = "Wald"
+                  "Wald" = "Wald"
                 )
               )
             ),
@@ -88,7 +82,6 @@ mod_inferencia_ui <- function(id) {
             # -- Contrastes ----
             shiny::conditionalPanel(
               condition = sprintf("input['%s'] == 'contrasts'", ns("analysis_type")),
-
               shiny::selectInput(
                 ns("ctr_y"),
                 label   = "Variable de respuesta (num\u00e9rica)",
@@ -99,14 +92,15 @@ mod_inferencia_ui <- function(id) {
                 label   = "Variable de grupo",
                 choices = NULL
               ),
-
               shiny::radioButtons(
-                inputId  = ns("ctr_mode"),
-                label    = "Modo",
-                choices  = c("Todos los pares" = "all_pairs",
-                             "Personalizado"    = "custom"),
+                inputId = ns("ctr_mode"),
+                label = "Modo",
+                choices = c(
+                  "Todos los pares" = "all_pairs",
+                  "Personalizado" = "custom"
+                ),
                 selected = "all_pairs",
-                inline   = TRUE
+                inline = TRUE
               ),
 
               # Opciones modo autom\u00e1tico
@@ -152,12 +146,10 @@ mod_inferencia_ui <- function(id) {
                 )
               )
             ),
-
             shiny::hr(),
-
             shiny::actionButton(
               inputId = ns("run"),
-              label   = shiny::tagList(
+              label = shiny::tagList(
                 shiny::tags$i(class = "fa fa-play"),
                 " ",
                 shiny::textOutput(ns("run_btn"), inline = TRUE)
@@ -172,7 +164,6 @@ mod_inferencia_ui <- function(id) {
       shiny::column(
         9,
         shiny::wellPanel(
-
           # Marco te\u00f3rico
           shiny::tags$div(
             class = "card-header-block card-header-block--inferencia",
@@ -183,7 +174,6 @@ mod_inferencia_ui <- function(id) {
             class = "card-body-block",
             shiny::uiOutput(ns("theory_box"))
           ),
-
           shiny::hr(),
 
           # Estado
@@ -196,7 +186,6 @@ mod_inferencia_ui <- function(id) {
             class = "card-body-block",
             shiny::verbatimTextOutput(ns("log"))
           ),
-
           shiny::hr(),
 
           # \u2500\u2500 Editor de matriz de contrastes (solo modo personalizado) \u2500\u2500\u2500\u2500\u2500
@@ -241,7 +230,6 @@ mod_inferencia_ui <- function(id) {
             class = "card-body-block",
             shiny::uiOutput(ns("results_ui"))
           ),
-
           shiny::hr(),
 
           # Gr\u00e1fico
@@ -254,7 +242,6 @@ mod_inferencia_ui <- function(id) {
             class = "card-body-block",
             shiny::plotOutput(ns("analysis_plot"), height = "420px")
           ),
-
           shiny::hr(),
 
           # Descarga
@@ -266,9 +253,9 @@ mod_inferencia_ui <- function(id) {
           shiny::tags$div(
             class = "card-body-block",
             shiny::fluidRow(
-              shiny::column(3, shiny::downloadButton(ns("dl_csv"),  "CSV",   class = "btn-sm btn-default")),
+              shiny::column(3, shiny::downloadButton(ns("dl_csv"), "CSV", class = "btn-sm btn-default")),
               shiny::column(3, shiny::downloadButton(ns("dl_xlsx"), "Excel", class = "btn-sm btn-default")),
-              shiny::column(3, shiny::downloadButton(ns("dl_rds"),  "RDS",   class = "btn-sm btn-default"))
+              shiny::column(3, shiny::downloadButton(ns("dl_rds"), "RDS", class = "btn-sm btn-default"))
             )
           )
         )

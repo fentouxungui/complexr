@@ -11,9 +11,10 @@
     shiny::req(input$arith_rconst)
     as.character(input$arith_rconst)
   }
-  op_r <- switch(
-    input$arith_op,
-    "\u2212" = "-", "\u00d7" = "*", "\u00f7" = "/",
+  op_r <- switch(input$arith_op,
+    "\u2212" = "-",
+    "\u00d7" = "*",
+    "\u00f7" = "/",
     input$arith_op
   )
   paste0(input$arith_left, " ", op_r, " ", right)
@@ -34,8 +35,11 @@
   shiny::req(input$ind_var, input$ind_op, input$ind_val)
   val <- trimws(input$ind_val)
   shiny::req(nchar(val) > 0L)
-  val_r <- if (!is.na(suppressWarnings(as.numeric(val)))) val
-           else sprintf('"%s"', val)
+  val_r <- if (!is.na(suppressWarnings(as.numeric(val)))) {
+    val
+  } else {
+    sprintf('"%s"', val)
+  }
   sprintf(
     "ifelse(%s %s %s, 1L, 0L)", input$ind_var, input$ind_op, val_r
   )
@@ -46,8 +50,8 @@
   df <- recode_df_fn()
   shiny::req(nrow(df) > 0L)
   src_col <- design_final_fn()$variables[[input$recode_src]]
-  is_num  <- is.numeric(src_col)
-  pairs   <- vapply(seq_len(nrow(df)), function(i) {
+  is_num <- is.numeric(src_col)
+  pairs <- vapply(seq_len(nrow(df)), function(i) {
     orig <- df$original[i]
     nuev <- df$nuevo[i]
     if (is_num) {
@@ -57,7 +61,7 @@
     }
   }, character(1L))
   sprintf(
-    'dplyr::case_when(%s, TRUE ~ NA_character_)',
+    "dplyr::case_when(%s, TRUE ~ NA_character_)",
     paste(pairs, collapse = ", ")
   )
 }
@@ -74,8 +78,7 @@
       vv, paste(brks, collapse = ", ")
     ))
   }
-  n <- switch(
-    input$cut_type,
+  n <- switch(input$cut_type,
     "terciles"  = 3L,
     "quartiles" = 4L,
     "quintiles" = 5L,
@@ -114,13 +117,13 @@
     shiny::radioButtons(
       ns("arith_rtype"),
       i18n_t(d, "mod_variables.arith_rtype"),
-      choiceNames  = list(
+      choiceNames = list(
         i18n_t(d, "mod_variables.arith_rvar"),
         i18n_t(d, "mod_variables.arith_rconst")
       ),
       choiceValues = list("var", "const"),
-      selected     = "var",
-      inline       = TRUE
+      selected = "var",
+      inline = TRUE
     ),
     shiny::conditionalPanel(
       paste0("input['", ns("arith_rtype"), "'] == 'var'"),
@@ -249,7 +252,7 @@
     )
   }
 
-  badge_bg    <- if (item$mode == "basic") "#3b82f6" else "#8b5cf6"
+  badge_bg <- if (item$mode == "basic") "#3b82f6" else "#8b5cf6"
   badge_label <- if (item$mode == "basic") {
     i18n_t(d, "mod_variables.mode_basic")
   } else {

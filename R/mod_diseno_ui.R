@@ -1,9 +1,7 @@
 mod_diseno_ui <- function(id) {
-
   ns <- shiny::NS(id)
 
   shiny::fluidPage(
-
     # Encabezado del modulo
     shiny::div(
       style = "margin-bottom:16px;",
@@ -32,9 +30,8 @@ mod_diseno_ui <- function(id) {
   width: 100%;
 }
 ")),
-
     shiny::tabsetPanel(
-      id   = ns("diseno_tabs"),
+      id = ns("diseno_tabs"),
       type = "tabs",
 
       # ============================================================
@@ -47,37 +44,28 @@ mod_diseno_ui <- function(id) {
           shiny::textOutput(ns("lbl_tab_config"), inline = TRUE)
         ),
         value = "config",
-
         shiny::br(),
-
         shiny::fluidRow(
-
           shiny::column(
             3,
             shiny::wellPanel(
               class = "sidebar-card sidebar-card--diseno",
-
               shiny::selectInput(
                 ns("design_type"),
                 "Tipo de dise\u00f1o",
                 choices = c(
-                  "Simple (SRS)"               = "srs",
-                  "Estratificado"              = "stratified",
+                  "Simple (SRS)" = "srs",
+                  "Estratificado" = "stratified",
                   "Conglomerados / Multiet\u00e1pico" = "cluster"
                 )
               ),
-
               shiny::uiOutput(ns("design_theory")),
-
               shiny::hr(),
-
               shiny::uiOutput(ns("design_arguments")),
-              
               shiny::br(),
               shiny::br(),
               shiny::br(),
               shiny::br(),
-              
               shiny::actionButton(
                 ns("build"),
                 shiny::textOutput(ns("build_btn"), inline = TRUE),
@@ -85,19 +73,14 @@ mod_diseno_ui <- function(id) {
               )
             )
           ),
-
           shiny::column(
             9,
             shiny::wellPanel(
-
               shiny::h4(shiny::textOutput(ns("design_summary"), inline = TRUE)),
               shiny::verbatimTextOutput(ns("log")),
-
               shiny::h4(shiny::textOutput(ns("r_code"), inline = TRUE)),
               shiny::verbatimTextOutput(ns("design_code")),
-
               shiny::hr(),
-
               shiny::h4(shiny::textOutput(ns("diagnostic"), inline = TRUE)),
               shiny::tableOutput(ns("summary"))
             )
@@ -115,9 +98,7 @@ mod_diseno_ui <- function(id) {
           shiny::textOutput(ns("lbl_tab_variables"), inline = TRUE)
         ),
         value = "variables",
-
         shiny::br(),
-
         mod_variables_ui(ns("variables"))
       )
     )

@@ -14,38 +14,39 @@
 #' @examples
 #' data <- generate_example_data(n_upm = 20, seed = 123)
 #' validate_simulation(data)
-validate_simulation <- function(data, strict = FALSE){
-  
+validate_simulation <- function(data, strict = FALSE) {
   # ---------------------------
   # Basic input validation
   # ---------------------------
   if (!is.data.frame(data)) {
     stop("`data` must be a data.frame or tibble")
   }
-  
+
   required_vars <- c(
-    "hogar_id","upm","area","weight",
-    "ingreso_pc","edad","educacion"
+    "hogar_id", "upm", "area", "weight",
+    "ingreso_pc", "edad", "educacion"
   )
-  
+
   missing_vars <- setdiff(required_vars, names(data))
-  
+
   if (length(missing_vars) > 0) {
     stop(
-      sprintf("Missing required columns: %s",
-              paste(missing_vars, collapse = ", "))
+      sprintf(
+        "Missing required columns: %s",
+        paste(missing_vars, collapse = ", ")
+      )
     )
   }
-  
+
   # ---------------------------
   # 1. Area constant within household
   # ---------------------------
   area_check <- data |>
     dplyr::distinct(hogar_id, area) |>
     dplyr::count(hogar_id)
-  
+
   ok_area <- all(area_check$n == 1)
-  
+
   # ---------------------------
   # 2. Weight constant within household
   # ---------------------------
@@ -55,9 +56,9 @@ validate_simulation <- function(data, strict = FALSE){
       n_w = dplyr::n_distinct(weight),
       .groups = "drop"
     )
-  
+
   ok_weight <- all(weight_check$n_w == 1)
-  
+
   # ---------------------------
   # 3. Per capita income consistency
   # ---------------------------
@@ -67,27 +68,27 @@ validate_simulation <- function(data, strict = FALSE){
       n_inc = dplyr::n_distinct(ingreso_pc),
       .groups = "drop"
     )
-  
+
   ok_income <- all(income_check$n_inc == 1)
-  
+
   # ---------------------------
   # 4. Education rule
   # edad < 5 → educacion NA
   # ---------------------------
   edu_check <- data |>
     dplyr::filter(edad < 5)
-  
+
   ok_edu <- all(is.na(edu_check$educacion))
-  
+
   # ---------------------------
   # 5. PSU size constraint
   # ---------------------------
   upm_check <- data |>
     dplyr::distinct(upm, hogar_id) |>
     dplyr::count(upm)
-  
+
   ok_upm <- all(upm_check$n <= 15)
-  
+
   # ---------------------------
   # Consolidated output
   # ---------------------------
@@ -107,7 +108,7 @@ validate_simulation <- function(data, strict = FALSE){
       ok_upm
     )
   )
-  
+
   # ---------------------------
   # Fail-fast option
   # ---------------------------
@@ -120,6 +121,6 @@ validate_simulation <- function(data, strict = FALSE){
       )
     )
   }
-  
+
   return(results)
 }

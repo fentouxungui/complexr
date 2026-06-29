@@ -24,28 +24,27 @@
 #'   )
 #' )
 mutate_survey_data <- function(data, definitions, overwrite = TRUE) {
-  
   # ---------------------------------------------------------
   # 1. Input validation
   # ---------------------------------------------------------
   if (!tibble::is_tibble(data)) {
     rlang::abort("`data` must be a tibble.")
   }
-  
+
   if (!is.list(definitions) || is.null(names(definitions))) {
     rlang::abort("`definitions` must be a named list.")
   }
-  
+
   if (any(names(definitions) == "")) {
     rlang::abort("All variable definitions must be named.")
   }
-  
+
   # ---------------------------------------------------------
   # 2. Overwrite protection
   # ---------------------------------------------------------
   existing_vars <- names(data)
   new_vars <- names(definitions)
-  
+
   if (!overwrite) {
     conflict <- intersect(existing_vars, new_vars)
     if (length(conflict) > 0) {
@@ -54,26 +53,25 @@ mutate_survey_data <- function(data, definitions, overwrite = TRUE) {
       )
     }
   }
-  
+
   # ---------------------------------------------------------
   # 3. Build quosures
   # ---------------------------------------------------------
   quos <- purrr::imap(
     definitions,
     function(def, name) {
-      
       if (!inherits(def, "formula")) {
         rlang::abort(
           paste("Definition for", name, "must be a formula (~ expr).")
         )
       }
-      
+
       expr <- rlang::f_rhs(def)
-      
+
       # Validación de variables referenciadas
       vars_used <- all.vars(expr)
       missing_vars <- setdiff(vars_used, names(data))
-      
+
       if (length(missing_vars) > 0) {
         rlang::abort(
           paste(
@@ -82,11 +80,11 @@ mutate_survey_data <- function(data, definitions, overwrite = TRUE) {
           )
         )
       }
-      
+
       rlang::new_quosure(expr, env = rlang::caller_env())
     }
   )
-  
+
   # ---------------------------------------------------------
   # 4. Mutate
   # ---------------------------------------------------------
